@@ -42,7 +42,6 @@ def split_chunks(text, chunk_size=50, overlap=0):
 
 def main():
     pdf_path = "Practical 2.pdf"
-    #print(stopwords.words('english')[:10])
 
     text_page = get_text(pdf_path)
 
