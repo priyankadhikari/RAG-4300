@@ -39,12 +39,3 @@ def split_chunks(text, chunk_size=50, overlap=0):
         chunk = " ".join(words[i: i + chunk_size])
         chunks.append(chunk)
     return chunks
-
-def main():
-    pdf_path = "Practical 2.pdf"
-
-    text_page = get_text(pdf_path)
-
-    #print(text_page)
-
-main()

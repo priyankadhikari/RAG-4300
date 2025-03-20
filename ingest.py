@@ -1,9 +1,9 @@
-#import ollama
+import ollama
 import redis
 import numpy as np
 from redis.commands.search.query import Query
 import os
-from text_preprocessing import get_text, text_prep, split_chunks
+from text_preprocessing import get_text, split_chunks
 
 redis_client = redis.Redis(host="localhost", port=6379, db=0)
 
@@ -32,10 +32,52 @@ def create_hnsw_index():
     )
     print("Index created successfully.")
 
+def get_embedding(text: str, model: str = "nomic-embed-text") -> list:
+
+    response = ollama.embeddings(model=model, prompt=text)
+    return response["embedding"]
+
+def store_embedding(file: str, page: str, chunk: str, embedding: list):
+    key = f"{DOC_PREFIX}:{file}_page_{page}_chunk_{chunk}"
+    redis_client.hset(
+        key,
+        mapping={
+            "file": file,
+            "page": page,
+            "chunk": chunk,
+            "embedding": np.array(
+                embedding, dtype=np.float32
+            ).tobytes(),  # Store as byte array
+        },
+    )
+    print(f"Stored embedding for: {chunk}")
+
+def process_pdfs(data_dir):
+    for file_name in os.listdir(data_dir):
+        if file_name.endswith(".pdf"):
+            pdf_path = os.path.join(data_dir, file_name)
+            text_by_page = get_text(pdf_path)
+            for page_num, text in text_by_page:
+                chunks = split_chunks(text)
+                # print(f"  Chunks: {chunks}")
+                for chunk_index, chunk in enumerate(chunks):
+                    # embedding = calculate_embedding(chunk)
+                    embedding = get_embedding(chunk)
+                    store_embedding(
+                        file=file_name,
+                        page=str(page_num),
+                        # chunk=str(chunk_index),
+                        chunk=str(chunk),
+                        embedding=embedding,
+                    )
+            print(f" -----> Processed {file_name}")
+
 def main():
 
     clear_redis_store()
     create_hnsw_index()
+    process_pdfs("/Users/nidhibendre/Documents/ds4300/RAG-4300/Data")
+    print("\n---Done processing PDFs---\n")
 
 if __name__ == "__main__":
     main()
