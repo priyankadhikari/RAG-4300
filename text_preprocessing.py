@@ -45,6 +45,6 @@ def main():
 
     text_page = get_text(pdf_path)
 
-    print(text_page)
+    #print(text_page)
 
 main()
