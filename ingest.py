@@ -33,7 +33,6 @@ def create_hnsw_index():
     print("Index created successfully.")
 
 def get_embedding(text: str, model: str = "nomic-embed-text") -> list:
-
     response = ollama.embeddings(model=model, prompt=text)
     return response["embedding"]
 
@@ -71,6 +70,23 @@ def process_pdfs(data_dir):
                         embedding=embedding,
                     )
             print(f" -----> Processed {file_name}")
+
+def query_redis(query_text: str):
+    q = (
+        Query("*=>[KNN 5 @embedding $vec AS vector_distance]")
+        .sort_by("vector_distance")
+        .return_fields("id", "vector_distance")
+        .dialect(2)
+    )
+    query_text = "Efficient search in vector databases"
+    embedding = get_embedding(query_text)
+    res = redis_client.ft(INDEX_NAME).search(
+        q, query_params={"vec": np.array(embedding, dtype=np.float32).tobytes()}
+    )
+    # print(res.docs)
+
+    for doc in res.docs:
+        print(f"{doc.id} \n ----> {doc.vector_distance}\n")
 
 def main():
 
