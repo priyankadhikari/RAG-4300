@@ -78,7 +78,6 @@ def query_redis(query_text: str):
         .return_fields("id", "vector_distance")
         .dialect(2)
     )
-    query_text = "Efficient search in vector databases"
     embedding = get_embedding(query_text)
     res = redis_client.ft(INDEX_NAME).search(
         q, query_params={"vec": np.array(embedding, dtype=np.float32).tobytes()}
@@ -94,6 +93,8 @@ def main():
     create_hnsw_index()
     process_pdfs("Data")
     print("\n---Done processing PDFs---\n")
+    query_redis("When is the due date?")
+
 
 if __name__ == "__main__":
     main()
