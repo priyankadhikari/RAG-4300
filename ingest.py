@@ -92,7 +92,7 @@ def main():
 
     clear_redis_store()
     create_hnsw_index()
-    process_pdfs("/Users/nidhibendre/Documents/ds4300/RAG-4300/Data")
+    process_pdfs("Data")
     print("\n---Done processing PDFs---\n")
 
 if __name__ == "__main__":
