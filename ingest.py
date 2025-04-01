@@ -93,7 +93,6 @@ def main():
     create_hnsw_index()
     process_pdfs("Data")
     print("\n---Done processing PDFs---\n")
-    query_redis("When is the due date?")
 
 
 if __name__ == "__main__":
