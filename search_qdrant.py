@@ -3,23 +3,20 @@ import numpy as np
 from qdrant_client import QdrantClient
 from qdrant_client.models import ScoredPoint
 
-# Initialize Qdrant client
 qdrant_client = QdrantClient(url="http://localhost:6333")
 
 VECTOR_DIM = 768
 COLLECTION_NAME = "embedding_collection"
 DISTANCE_METRIC = "Cosine"
 
-def get_embedding(text: str, embed_model="nomic-embed-text") -> list:
+def get_embedding(text: str, embed_model="nomic-embed-text"):
     response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]
 
 def search_embeddings(query, embed_model="nomic-embed-text", top_k=3):
-    """Search for similar embeddings in Qdrant."""
     query_embedding = get_embedding(query, embed_model)
 
     try:
-        # Perform the vector similarity search
         search_result = qdrant_client.search(
             collection_name=COLLECTION_NAME,
             query_vector=query_embedding,
@@ -28,7 +25,6 @@ def search_embeddings(query, embed_model="nomic-embed-text", top_k=3):
             with_vectors=False
         )
 
-        # Transform results into the expected format
         top_results = [
             {
                 "file": result.payload.get('file', 'Unknown file'),
@@ -39,7 +35,6 @@ def search_embeddings(query, embed_model="nomic-embed-text", top_k=3):
             for result in search_result
         ]
 
-        # Print results for debugging
         for result in top_results:
             print(f"---> File: {result['file']}, Page: {result['page']}, Chunk: {result['chunk']}")
 
@@ -50,7 +45,6 @@ def search_embeddings(query, embed_model="nomic-embed-text", top_k=3):
         return []
 
 def generate_rag_response(query, context_results, llm):
-    # Prepare context string
     context_str = "\n".join(
         [
             f"From {result.get('file', 'Unknown file')} (page {result.get('page', 'Unknown page')}, chunk {result.get('chunk', 'Unknown chunk')}) "
@@ -61,7 +55,6 @@ def generate_rag_response(query, context_results, llm):
 
     print(f"context_str: {context_str}")
 
-    # Construct prompt with context
     prompt = f"""You are a helpful AI assistant. 
     Use the following context to answer the query as accurately as possible. If the context is 
     not relevant to the query, say 'I don't know'.
@@ -73,7 +66,6 @@ Query: {query}
 
 Answer:"""
 
-    # Generate response using Ollama
     response = ollama.chat(
         model=llm, messages=[{"role": "user", "content": prompt}]
     )
@@ -81,7 +73,6 @@ Answer:"""
     return response["message"]["content"]
 
 def interactive_search(embed_model, llm):
-    """Interactive search interface."""
     print("🔍 RAG Search Interface")
     print("Type 'exit' to quit")
 
@@ -91,10 +82,8 @@ def interactive_search(embed_model, llm):
         if query.lower() == "exit":
             break
 
-        # Search for relevant embeddings
         context_results = search_embeddings(query, embed_model)
 
-        # Generate RAG response
         response = generate_rag_response(query, context_results, llm)
 
         print("\n--- Response ---")
@@ -102,5 +91,4 @@ def interactive_search(embed_model, llm):
 
 
 if __name__ == "__main__":
-    # Specify which embedding model here
     interactive_search(embed_model="nomic-embed-text", llm="mistral:latest")

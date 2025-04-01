@@ -8,7 +8,8 @@ chunking_strategies = [
 # Embedding models
 embedding_models = [
     "nomic-embed-text",
-    "all-MiniLM-L6-v2"
+    "all-minilm",
+    "mxbai-embed-large"
 ]
 
 # Vector databases
@@ -21,5 +22,5 @@ vector_dbs = [
 # LLM models
 llm_models = [
     "mistral:latest",
-    "llama2"
+    "llama2:latest"
 ]

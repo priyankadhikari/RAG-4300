@@ -3,7 +3,10 @@ from utils import measure_time_memory, write_to_csv
 
 import ingest
 import search
+import search_chroma
+import search_qdrant
 import ingest_chroma
+import ingest_qdrant
 
 def run_ingest_pipeline(vector_db, embed_model, chunk_size, overlap):
     if vector_db == "redis":
@@ -11,10 +14,11 @@ def run_ingest_pipeline(vector_db, embed_model, chunk_size, overlap):
         ingest.create_hnsw_index()
         ingest.process_pdfs("Data", embed_model=embed_model, chunk_size=chunk_size, overlap=overlap)
     elif vector_db == "chroma":
-        ingest_chroma.clear_chroma_store()
-        # process pdfs
+        ingest_chroma.process_pdfs("Data", embed_model=embed_model, chunk_size=chunk_size, overlap=overlap)
     elif vector_db == "qdrant":
-        #qdrant stuff
+        ingest_qdrant.clear_qdrant_collection()
+        ingest_qdrant.create_qdrant_collection()
+        ingest_qdrant.process_pdfs("Data", embed_model=embed_model, chunk_size=chunk_size, overlap=overlap)
     print("\n---Done processing PDFs---\n")
 
 def run_search_pipeline(vector_db, embed_model, llm_model, test_query="test query"):
@@ -22,11 +26,12 @@ def run_search_pipeline(vector_db, embed_model, llm_model, test_query="test quer
         context_results = search.search_embeddings(test_query, embed_model)
         response = search.generate_rag_response(test_query, context_results, llm_model)
     elif vector_db == "chroma":
-        # search for chroma
+        context_results = search_chroma.search_embeddings(test_query, embed_model)
+        response = search_chroma.generate_rag_response(test_query, context_results, llm_model)
     elif vector_db == "qdrant":
-        # search for qdrant
+        context_results = search_qdrant.search_embeddings(test_query, embed_model)
+        response = search_qdrant.generate_rag_response(test_query, context_results, llm_model)
     return response
-
 
 def run_experiments():
     """
