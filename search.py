@@ -21,15 +21,15 @@ DISTANCE_METRIC = "COSINE"
 #     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
 
-def get_embedding(text: str, model: str = "nomic-embed-text") -> list:
+def get_embedding(text: str, embed_model) -> list:
 
-    response = ollama.embeddings(model=model, prompt=text)
+    response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]
 
 
-def search_embeddings(query, top_k=3):
+def search_embeddings(query, embed_model, top_k=3):
 
-    query_embedding = get_embedding(query)
+    query_embedding = get_embedding(query, embed_model)
 
     # Convert embedding to bytes for Redis search
     query_vector = np.array(query_embedding, dtype=np.float32).tobytes()
@@ -75,7 +75,7 @@ def search_embeddings(query, top_k=3):
         return []
 
 
-def generate_rag_response(query, context_results):
+def generate_rag_response(query, context_results, llm):
 
     # Prepare context string
     context_str = "\n".join(
@@ -102,13 +102,13 @@ Answer:"""
 
     # Generate response using Ollama
     response = ollama.chat(
-        model="mistral:latest", messages=[{"role": "user", "content": prompt}]
+        model=llm, messages=[{"role": "user", "content": prompt}]
     )
 
     return response["message"]["content"]
 
 
-def interactive_search():
+def interactive_search(embed_model, llm):
     """Interactive search interface."""
     print("🔍 RAG Search Interface")
     print("Type 'exit' to quit")
@@ -120,10 +120,10 @@ def interactive_search():
             break
 
         # Search for relevant embeddings
-        context_results = search_embeddings(query)
+        context_results = search_embeddings(query, embed_model)
 
         # Generate RAG response
-        response = generate_rag_response(query, context_results)
+        response = generate_rag_response(query, context_results, llm)
 
         print("\n--- Response ---")
         print(response)
@@ -152,4 +152,5 @@ def interactive_search():
 
 
 if __name__ == "__main__":
-    interactive_search()
+    # Specify which embedding model here
+    interactive_search(embed_model="nomic-embed-text", llm="mistral:latest")

@@ -32,8 +32,8 @@ def create_hnsw_index():
     )
     print("Index created successfully.")
 
-def get_embedding(text: str, model: str = "nomic-embed-text") -> list:
-    response = ollama.embeddings(model=model, prompt=text)
+def get_embedding(text: str, embed_model) -> list:
+    response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]
 
 def store_embedding(file: str, page: str, chunk: str, embedding: list):
@@ -51,17 +51,17 @@ def store_embedding(file: str, page: str, chunk: str, embedding: list):
     )
     print(f"Stored embedding for: {chunk}")
 
-def process_pdfs(data_dir):
+def process_pdfs(data_dir, embed_model, chunk_size=50, overlap=0):
     for file_name in os.listdir(data_dir):
         if file_name.endswith(".pdf"):
             pdf_path = os.path.join(data_dir, file_name)
             text_by_page = get_text(pdf_path)
             for page_num, text in text_by_page:
-                chunks = split_chunks(text)
+                chunks = split_chunks(text, chunk_size=chunk_size, overlap=overlap)
                 # print(f"  Chunks: {chunks}")
                 for chunk_index, chunk in enumerate(chunks):
                     # embedding = calculate_embedding(chunk)
-                    embedding = get_embedding(chunk)
+                    embedding = get_embedding(chunk, embed_model)
                     store_embedding(
                         file=file_name,
                         page=str(page_num),
@@ -91,9 +91,9 @@ def main():
 
     clear_redis_store()
     create_hnsw_index()
-    process_pdfs("Data")
+    # Specify embedding model, chunk size, and overlap here
+    process_pdfs("Data", embed_model="nomic-embed-text", chunk_size=50, overlap=0)
     print("\n---Done processing PDFs---\n")
-
 
 if __name__ == "__main__":
     main()
