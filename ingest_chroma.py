@@ -4,7 +4,6 @@ import numpy as np
 import os
 from text_preprocessing import get_text, split_chunks
 
-# Connect to Chroma running on port 8000
 chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 collection = chroma_client.get_or_create_collection(name="embedding_collection")
 
@@ -31,20 +30,25 @@ def store_embedding(file: str, page: str, chunk: str, embedding: list):
     print(f"Stored embedding for: {chunk}")
 
 
-def process_pdfs(data_dir):
+def process_pdfs(data_dir, embed_model, chunk_size=50, overlap=0):
     for file_name in os.listdir(data_dir):
         if file_name.endswith(".pdf"):
             pdf_path = os.path.join(data_dir, file_name)
             text_by_page = get_text(pdf_path)
             for page_num, text in text_by_page:
-                chunks = split_chunks(text)
+                chunks = split_chunks(text, chunk_size=chunk_size, overlap=overlap)
+                # print(f"  Chunks: {chunks}")
                 for chunk_index, chunk in enumerate(chunks):
-                    embedding = get_embedding(chunk)
+                    # embedding = calculate_embedding(chunk)
+                    embedding = get_embedding(chunk, embed_model)
                     store_embedding(
-                        file=file_name, page=str(page_num), chunk=str(chunk), embedding=embedding
+                        file=file_name,
+                        page=str(page_num),
+                        # chunk=str(chunk_index),
+                        chunk=str(chunk),
+                        embedding=embedding,
                     )
             print(f" -----> Processed {file_name}")
-
 
 def query_chroma(query_text: str):
     embedding = get_embedding(query_text)
@@ -56,7 +60,7 @@ def query_chroma(query_text: str):
 
 def main():
     #clear_chroma_store()
-    process_pdfs("Data")
+    process_pdfs("Data", embed_model="nomic-embed-text", chunk_size=50, overlap=0)
     print("\n---Done processing PDFs---\n")
 
 
