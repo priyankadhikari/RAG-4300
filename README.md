@@ -12,7 +12,7 @@ This project implements a local Retrieval-Augmented Generation (RAG) system to f
 ## Features
 - Supports multiple **vector databases**: Redis, Chroma, and Qdrant.
 - Compares different **embedding models**:
-  - `Nomic-embed-text`
+  - `nomic-embed-text`
   - `all-minilm`
   - `mxbai-embed-large`
 - Allows tuning of **chunking strategies**:
