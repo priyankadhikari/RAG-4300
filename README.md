@@ -10,14 +10,22 @@ This project implements a local Retrieval-Augmented Generation (RAG) system to f
 5. **Generates a response** using the retrieved context and LLM.
 
 ## Features
-- Supports multiple **vector databases**: Redis, Qdrant, and an additional database of choice.
-- Compares different **embedding models** (e.g., `all-MiniLM-L6-v2`, `all-mpnet-base-v2`, `InstructorXL`).
-- Allows tuning of **chunking strategies** (chunk size, overlap, preprocessing).
-- Compares **local LLMs** such as LLaMA 2 and Mistral.
+- Supports multiple **vector databases**: Redis, Chroma, and Qdrant.
+- Compares different **embedding models**:
+  - `Nomic-embed-text`
+  - `sentence-transformers/all-MiniLM-L6-v2`
+  - `mxbai-embed-large`
+- Allows tuning of **chunking strategies**:
+  - **Sizes**: 50, 200, 500 tokens
+  - **Overlaps**: 0, 50, 100 tokens
+- Compares **local LLMs**:
+  - `Mistral`
+  - `Llama-2`
 - Evaluates indexing/querying **performance metrics** (speed, memory usage, retrieval quality).
 
 ---
 ## Installation
+
 ### Prerequisites
 Ensure you have the following installed:
 - Python 3.8+
@@ -25,9 +33,10 @@ Ensure you have the following installed:
 - Ollama (for running local LLMs)
 - Redis (for Redis Vector DB)
 - Qdrant (for Qdrant Vector DB)
-- Additional vector database (as chosen by the team)
+- Chroma (for Chroma Vector DB)
 
 ### Setup
+
 1. **Clone the repository**
 ```bash
     git clone https://github.com/yourusername/DS4300-RAG-System.git
@@ -48,10 +57,14 @@ Ensure you have the following installed:
 ```bash
     docker run -p 6333:6333 -d qdrant/qdrant
 ```
-- **Other vector databases** should be installed as per their documentation.
+- **Chroma**
+```bash
+    python -m chromadb run
+```
 
 ---
 ## Usage
+
 ### 1. Data Ingestion & Indexing
 To process and index course notes:
 ```bash
@@ -86,10 +99,26 @@ This records time, memory usage, and experiment results in `experiment_results.c
 ---
 ## Configuration
 Modify `config.py` (if applicable) or update parameters directly in scripts:
-- **Chunking**: `chunk_size=200, overlap=50`
-- **Embedding models**: `sentence-transformers/all-MiniLM-L6-v2`
-- **LLMs**: `mistral:latest`, `llama2-7B`
-- **Vector DB**: Redis, Qdrant
+- **Chunking**:
+  - Sizes: 50, 200, 500 tokens
+  - Overlaps: 0, 50, 100 tokens
+- **Embedding models**:
+  - `Nomic-embed-text`
+  - `sentence-transformers/all-MiniLM-L6-v2`
+  - `mxbai-embed-large`
+- **LLMs**:
+  - `Mistral`
+  - `Llama-2`
+- **Vector DB**:
+  - Redis, Qdrant, Chroma
+
+---
+## Test Queries
+The following test queries were used to evaluate retrieval effectiveness and LLM responses:
+1. **Write a PyMongo query** to find documents where the Customer’s address starts with the letter "S" or higher for Customers (“customers”) in the database (“mydatabase”). Only use the documents provided. [Reference](https://www.w3schools.com/python/python_mongodb_query.asp)
+2. **What is the capital of Tennessee?** Only use the documents provided.
+3. **Provide a 2-sentence summary on Redis and its functionality.** Only use the documents provided.
+4. **Compare and contrast Redis and Neo4j.** Only use the documents provided.
 
 ---
 ## Deliverables
@@ -98,11 +127,7 @@ Modify `config.py` (if applicable) or update parameters directly in scripts:
 - **Evaluation Metrics** (Robustness, Analysis, Pipeline Recommendation)
 
 ---
-## Contributors
+## Team
 - **Team Members**: Priyanka Adhikari, Ruchira Banerjee, and Nidhi Bendre
 - **DS4300 Group**: Ruchidhiyanka
-
----
-## License
-[Specify license, e.g., MIT License]
 
