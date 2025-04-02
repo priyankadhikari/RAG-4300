@@ -1,7 +1,7 @@
 # Retrieval-Augmented Generation (RAG) System for DS4300 Notes
 
 ## Overview
-This project implements a local Retrieval-Augmented Generation (RAG) system to facilitate querying and summarization of DS4300 course notes. The system:
+This project implements a local Retrieval-Augmented Generation system to answer questions and summarize DS4300 course notes. The system:
 
 1. **Ingests** a collection of documents (e.g., course notes, slides, and additional documentation).
 2. **Indexes** these documents using embeddings and a vector database.
