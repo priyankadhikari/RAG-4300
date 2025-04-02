@@ -7,7 +7,6 @@ from text_preprocessing import get_text, split_chunks
 
 redis_client = redis.Redis(host="localhost", port=6379, db=0)
 
-VECTOR_DIM = 768
 INDEX_NAME = "embedding_index"
 DOC_PREFIX = "doc:"
 DISTANCE_METRIC = "COSINE"
@@ -17,7 +16,7 @@ def clear_redis_store():
     redis_client.flushdb()
     print("Redis store cleared.")
 
-def create_hnsw_index():
+def create_hnsw_index(vector_dim):
     try:
         redis_client.execute_command(f"FT.DROPINDEX {INDEX_NAME} DD")
     except redis.exceptions.ResponseError:
@@ -27,7 +26,7 @@ def create_hnsw_index():
         f"""
         FT.CREATE {INDEX_NAME} ON HASH PREFIX 1 {DOC_PREFIX}
         SCHEMA text TEXT
-        embedding VECTOR HNSW 6 DIM {VECTOR_DIM} TYPE FLOAT32 DISTANCE_METRIC {DISTANCE_METRIC}
+        embedding VECTOR HNSW 6 DIM {vector_dim} TYPE FLOAT32 DISTANCE_METRIC {DISTANCE_METRIC}
         """
     )
     print("Index created successfully.")

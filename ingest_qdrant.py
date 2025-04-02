@@ -4,10 +4,9 @@ import ollama
 from text_preprocessing import get_text, split_chunks
 from qdrant_client.models import VectorParams, Distance
 import uuid
-
+import config
 qdrant_client = qdrant_client.QdrantClient(url="http://localhost:6333")
 
-VECTOR_DIM = 768
 COLLECTION_NAME = "embedding_collection"
 DISTANCE_METRIC = Distance.COSINE
 
@@ -18,10 +17,10 @@ def clear_qdrant_collection():
     except Exception as e:
         print(f"Error deleting collection: {e}")
 
-def create_qdrant_collection():
+def create_qdrant_collection(vector_dim):
     try:
         vectors_config = VectorParams(
-            size=VECTOR_DIM,
+            size=vector_dim,
             distance=DISTANCE_METRIC
         )
 

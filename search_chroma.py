@@ -5,8 +5,6 @@ import ollama
 chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 collection = chroma_client.get_or_create_collection(name="embedding_collection")
 
-VECTOR_DIM = 768
-
 def get_embedding(text: str, embed_model="nomic-embed-text") -> list:
     response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]

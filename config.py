@@ -7,14 +7,14 @@ chunking_strategies = [
 
 # Embedding models
 embedding_models = [
-    "nomic-embed-text",
-    "all-minilm",
-    "mxbai-embed-large"
+    {"model_name": "nomic-embed-text", "vector_dim" : 768},
+    {"model_name": "all-minilm", "vector_dim" : 384},
+    {"model_name":"mxbai-embed-large", "vector_dim" : 1024},
 ]
 
 # Vector databases
 vector_dbs = [
-    "redis",
+    #"redis",
     "chroma",
     "qdrant"
 ]

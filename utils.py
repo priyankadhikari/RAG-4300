@@ -19,14 +19,14 @@ def measure_time_memory(func, *args, **kwargs):
     return exec_time, mem_used, result
 
 def write_to_csv(data, filename="experiment_results.csv"):
-    file_exists = os.path.isfile(filename)
+    if os.path.exists(filename):
+        os.remove(filename)
     with open(filename, mode="a", newline="") as file:
         writer = csv.writer(file)
-        if not file_exists:
-            # Write header if file does not exist.
-            writer.writerow([
-                "VectorDB", "LLM", "EmbeddingModel", "ChunkSize", "Overlap",
-                "IngestTime(s)", "IngestMem(MB)",
-                "SearchTime(s)", "SearchMem(MB)"
-            ])
+        # Write header if file does not exist.
+        writer.writerow([
+            "VectorDB", "LLM", "EmbeddingModel", "ChunkSize", "Overlap",
+            "IngestTime(s)", "IngestMem(MB)",
+            "SearchTime(s)", "SearchMem(MB)"
+        ])
         writer.writerow(data)
