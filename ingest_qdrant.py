@@ -57,7 +57,7 @@ def store_embedding(file: str, page: str, chunk: str, embedding: list, vector_di
     print(f"Stored embedding for: {chunk}")
 
 
-def process_pdfs(data_dir, embed_model="nomic-embed-text", chunk_size=50, overlap=0):
+def process_pdfs(vector_dim, data_dir, embed_model="nomic-embed-text", chunk_size=50, overlap=0):
     for file_name in os.listdir(data_dir):
         if file_name.endswith(".pdf"):
             pdf_path = os.path.join(data_dir, file_name)
@@ -71,6 +71,7 @@ def process_pdfs(data_dir, embed_model="nomic-embed-text", chunk_size=50, overla
                         page=str(page_num),
                         chunk=str(chunk_index),
                         embedding=embedding,
+                        vector_dim=vector_dim
                     )
             print(f"-----> Processed {file_name}")
 
