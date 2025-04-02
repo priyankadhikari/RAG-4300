@@ -64,8 +64,8 @@ def run_experiments():
 
                         # Record the results into a CSV row.
                         row = [
-                            vector_db, llm_model, embed_model, chunk_size, overlap, query, search_result,
-                            ingest_time, ingest_mem, search_time, search_mem
+                            vector_db, llm_model, embed_model, chunk_size, overlap,
+                            ingest_time, ingest_mem, search_time, search_mem, query, search_result
                         ]
                         write_to_csv(row)
 
