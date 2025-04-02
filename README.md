@@ -99,9 +99,8 @@ Modify `config.py` (if applicable) or update parameters directly in scripts:
 
 ---
 ## Contributors
-- **Team Members**: [Add names here]
-- **Course**: DS4300
-- **Instructor**: [Instructor Name]
+- **Team Members**: Priyanka Adhikari, Ruchira Banerjee, and Nidhi Bendre
+- **DS4300 Group**: Ruchidhiyanka
 
 ---
 ## License
