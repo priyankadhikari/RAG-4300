@@ -17,7 +17,7 @@ def run_ingest_pipeline(vector_db, embed_model, chunk_size, overlap, vector_dim)
         collection = ingest_chroma.get_or_create_collection(vector_dim)
         ingest_chroma.process_pdfs(collection,"Data", embed_model=embed_model, chunk_size=chunk_size, overlap=overlap)
     elif vector_db == "qdrant":
-        ingest_qdrant.clear_qdrant_collection()
+        ingest_qdrant.clear_qdrant_collection(vector_dim=vector_dim)
         ingest_qdrant.create_qdrant_collection(vector_dim=vector_dim)
         ingest_qdrant.process_pdfs("Data", embed_model=embed_model, chunk_size=chunk_size, overlap=overlap)
     print("\n---Done processing PDFs---\n")
@@ -27,7 +27,8 @@ def run_search_pipeline(vector_db, embed_model, llm_model, vector_dim, test_quer
         context_results = search.search_embeddings(test_query, embed_model)
         response = search.generate_rag_response(test_query, context_results, llm_model)
     elif vector_db == "chroma":
-        context_results = search_chroma.search_embeddings(test_query, embed_model)
+        collection = search_chroma.get_collection(vector_dim=vector_dim)
+        context_results = search_chroma.search_embeddings(collection, test_query, embed_model)
         response = search_chroma.generate_rag_response(test_query, context_results, llm_model)
     elif vector_db == "qdrant":
         context_results = search_qdrant.search_embeddings(test_query, embed_model)
@@ -40,9 +41,9 @@ def run_experiments():
     measuring time and memory usage, and writing results to a CSV.
     """
     for vector_db in vector_dbs:
-        for embeding_models in embedding_models:
-            embed_model = embeding_models["model_name"]
-            vector_dim = embeding_models["vector_dim"]
+        for embedding_model in embedding_models:
+            embed_model = embedding_model["model_name"]
+            vector_dim = embedding_model["vector_dim"]
             for strategy in chunking_strategies:
                 chunk_size = strategy["chunk_size"]
                 overlap = strategy["overlap"]

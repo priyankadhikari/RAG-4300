@@ -8,8 +8,8 @@ chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 
 def clear_chroma_store(vector_dim):
     print("Clearing existing Chroma store...")
-    chroma_client.get_or_create_collection(name=f"embedding_collection{vector_dim}")
-    chroma_client.delete_collection(name=f"embedding_collection{vector_dim}")
+    chroma_client.get_or_create_collection(name=f"embedding_collection_{vector_dim}")
+    chroma_client.delete_collection(name=f"embedding_collection_{vector_dim}")
     print("Chroma store cleared.")
 
 def get_or_create_collection(vector_dim):

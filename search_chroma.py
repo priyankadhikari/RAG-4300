@@ -3,14 +3,16 @@ import numpy as np
 import ollama
 
 chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-collection = chroma_client.get_or_create_collection(name="embedding_collection")
 
-def get_embedding(text: str, embed_model="nomic-embed-text") -> list:
+def get_collection(vector_dim):
+    collection = chroma_client.get_or_create_collection(name=f"embedding_collection_{vector_dim}")
+    return collection
+def get_embedding(text: str, embed_model):
     response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]
 
 
-def search_embeddings(query, embed_model="nomic-embed-text", top_k=3):
+def search_embeddings(collection, query, embed_model, top_k=3):
     query_embedding = get_embedding(query, embed_model)
 
     results = collection.query(
@@ -71,7 +73,7 @@ Answer:"""
     return response["message"]["content"]
 
 
-def interactive_search(embed_model="nomic-embed-text", llm="mistral:latest"):
+def interactive_search(collection, embed_model="nomic-embed-text", llm="mistral:latest"):
     print("🔍 RAG Search Interface")
     print("Type 'exit' to quit")
 
@@ -81,7 +83,7 @@ def interactive_search(embed_model="nomic-embed-text", llm="mistral:latest"):
         if query.lower() == "exit":
             break
 
-        context_results = search_embeddings(query, embed_model)
+        context_results = search_embeddings(collection, query, embed_model)
 
         response = generate_rag_response(query, context_results, llm)
 
@@ -90,4 +92,5 @@ def interactive_search(embed_model="nomic-embed-text", llm="mistral:latest"):
 
 
 if __name__ == "__main__":
-    interactive_search(embed_model="nomic-embed-text", llm="mistral:latest")
+    collection = get_collection(vector_dim=768)
+    interactive_search(collection, embed_model="nomic-embed-text", llm="mistral:latest")

@@ -7,13 +7,12 @@ import uuid
 import config
 qdrant_client = qdrant_client.QdrantClient(url="http://localhost:6333")
 
-COLLECTION_NAME = "embedding_collection"
 DISTANCE_METRIC = Distance.COSINE
 
-def clear_qdrant_collection():
+def clear_qdrant_collection(vector_dim):
     try:
-        qdrant_client.delete_collection(collection_name=COLLECTION_NAME)
-        print(f"Collection '{COLLECTION_NAME}' deleted successfully.")
+        qdrant_client.delete_collection(collection_name=f"embedding_collection_{vector_dim}")
+        print(f"Collection 'embedding_collection_{vector_dim}' deleted successfully.")
     except Exception as e:
         print(f"Error deleting collection: {e}")
 
@@ -25,20 +24,20 @@ def create_qdrant_collection(vector_dim):
         )
 
         qdrant_client.create_collection(
-            collection_name=COLLECTION_NAME,
+            collection_name=f'embedding_collection_{vector_dim}',
             vectors_config=vectors_config
         )
-        print(f"Collection '{COLLECTION_NAME}' created successfully.")
+        print(f"Collection 'embedding_collection_{vector_dim}' created successfully.")
     except Exception as e:
         print(f"Error creating collection: {e}")
 
 
-def get_embedding(text: str, embed_model="nomic-embed-text") -> list:
+def get_embedding(text: str, embed_model):
     response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]
 
 
-def store_embedding(file: str, page: str, chunk: str, embedding: list):
+def store_embedding(file: str, page: str, chunk: str, embedding: list, vector_dim):
     point_id = str(uuid.uuid4())
 
     payload = {
@@ -48,7 +47,7 @@ def store_embedding(file: str, page: str, chunk: str, embedding: list):
     }
 
     qdrant_client.upsert(
-        collection_name=COLLECTION_NAME,
+        collection_name=f'embedding_collection_{vector_dim}',
         points=[{
             "id": point_id,
             "vector": embedding,

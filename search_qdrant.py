@@ -6,19 +6,18 @@ from qdrant_client.models import ScoredPoint
 qdrant_client = QdrantClient(url="http://localhost:6333")
 
 VECTOR_DIM = 768
-COLLECTION_NAME = "embedding_collection"
 DISTANCE_METRIC = "Cosine"
 
-def get_embedding(text: str, embed_model="nomic-embed-text"):
+def get_embedding(text: str, embed_model):
     response = ollama.embeddings(model=embed_model, prompt=text)
     return response["embedding"]
 
-def search_embeddings(query, embed_model="nomic-embed-text", top_k=3):
+def search_embeddings(vector_dim, query, embed_model, top_k=3):
     query_embedding = get_embedding(query, embed_model)
 
     try:
         search_result = qdrant_client.search(
-            collection_name=COLLECTION_NAME,
+            collection_name=f"embedding_collection_{vector_dim}",
             query_vector=query_embedding,
             limit=top_k,
             with_payload=True,

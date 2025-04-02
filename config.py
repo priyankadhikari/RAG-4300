@@ -14,7 +14,7 @@ embedding_models = [
 
 # Vector databases
 vector_dbs = [
-    #"redis",
+    "redis",
     "chroma",
     "qdrant"
 ]
