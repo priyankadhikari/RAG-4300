@@ -24,3 +24,12 @@ llm_models = [
     "mistral:latest",
     "llama2:latest"
 ]
+
+# Queries to test
+queries = [
+    "1. Write a Pymongo query to find the documents where a Customer’s address starts with the letter "
+    "'S' or higher for Customers ('customers') in a database ('mydatabase'). Only use the documents provided.",
+    "2. What is the capital of Tennessee? Only use the documents provided.",
+    "3. Provide a 2-sentence summary on Redis and its functionality. Only use the documents provided.",
+    "4. Compare and contrast Redis and Neo4j. Only use the documents provided."
+]
