@@ -1,4 +1,4 @@
-VectorDB,LLM,EmbeddingModel,ChunkSize,Overlap,IngestTime(s),IngestMem(MB),SearchTime(s),SearchMem(MB)
+VectorDB,LLM,EmbeddingModel,ChunkSize,Overlap,IngestTime(s),IngestMem(MB),SearchTime(s),SearchMem(MB),Query,Response
 redis,mistral:latest,nomic-embed-text,50,0,17.529897928237915,29.375,21.388638257980347,-164.625,1. Write a Pymongo query to find the documents where a Customer’s address starts with the letter 'S' or higher for Customers ('customers') in a database ('mydatabase'). Only use the documents provided.," To find the documents where a Customer's address starts with the letter 'S' or higher (assuming that 'S' is the lowest possible character) using Pymongo, you can use the following query:
 
 ```python
