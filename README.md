@@ -106,7 +106,7 @@ llm_models = [
 ```
 
 ## Analyzing Results
-After running the experiments, you can analyze the results in `experiment_results.csv`:
+After running the experiments, you can analyze the results using the data visualizations in `data_visualizations.ipynb`:
 
 ```bash
 # Example: visualize results with the provided code
