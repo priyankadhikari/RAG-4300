@@ -1,133 +1,136 @@
-# Retrieval-Augmented Generation (RAG) System for DS4300 Notes
+# DS4300 Retrieval-Augmented Generation System - Ruchidhiyanka
 
 ## Overview
-This project implements a local Retrieval-Augmented Generation system to answer questions and summarize DS4300 course notes. The system:
+This project implements a local Retrieval-Augmented Generation system to answer questions and summarize our group's DS4300 course notes and prepared documents for the purpose of assisting on the exam. 
 
-1. **Ingests** a collection of documents (e.g., course notes, slides, and additional documentation).
-2. **Indexes** these documents using embeddings and a vector database.
-3. **Accepts user queries** and retrieves relevant context.
-4. **Packages the context** into a prompt for a locally running Large Language Model (LLM).
-5. **Generates a response** using the retrieved context and LLM.
+The project:
+1. Ingests a collection of documents, notes, and PDFs.
+2. Indexes these documents using embeddings and vector databases.
+3. Accepts user queries and retrieves relevant context.
+4. Packages the context as a prompt for a local large language model (LLM).
+5. Generates a response using the retrieved context and LLM.
+6. Evaluates the models based on performance metrics like ingest and search speed, memory usage, and retrieval quality.
 
-## Features
-- Supports multiple **vector databases**: Redis, Chroma, and Qdrant.
-- Compares different **embedding models**:
+## Features we Tested
+- 3 vector databases: Redis, Chroma, and Qdrant.
+- 3 different embedding models:
   - `nomic-embed-text`
   - `all-minilm`
   - `mxbai-embed-large`
-- Allows tuning of **chunking strategies**:
-  - **Sizes**: 50, 200, 500 tokens
-  - **Overlaps**: 0, 50, 100 tokens
-- Compares **local LLMs**:
+- 9 variations of chunking strategies:
+  - **Sizes**: 50, 100, 200 tokens
+  - **Overlaps**: 0, 10, 20 tokens
+- 2 local LLMs:
   - `Mistral`
   - `Llama-2`
-- Evaluates indexing/querying **performance metrics** (speed, memory usage, retrieval quality).
-
----
-## Installation
-
-### Prerequisites
-Ensure you have the following installed:
-- Python 3.8+
-- Required Python packages (install using `requirements.txt`)
-- Ollama (for running local LLMs)
-- Redis (for Redis Vector DB)
-- Qdrant (for Qdrant Vector DB)
-- Chroma (for Chroma Vector DB)
 
 ### Setup
 
-1. **Clone the repository**
-```bash
-    git clone https://github.com/yourusername/DS4300-RAG-System.git
-    cd DS4300-RAG-System
-```
-
-2. **Install dependencies**
-```bash
-    pip install -r requirements.txt
-```
-
-3. **Start necessary services**
+1. **Start necessary containers**
 - **Redis**
-```bash
-    redis-server
-```
-- **Qdrant** (Docker-based setup)
-```bash
-    docker run -p 6333:6333 -d qdrant/qdrant
-```
+
+- **Qdrant**
+
 - **Chroma**
-```bash
-    python -m chromadb run
-```
 
----
+2. **Download and use Ollama**
+
 ## Usage
-
-### 1. Data Ingestion & Indexing
-To process and index course notes:
+### 1. Running All Experiments
+To run all experiments with the predefined configurations:
 ```bash
-    python ingest.py
+python main.py
 ```
+
 This will:
-- Load and preprocess documents (PDFs, text files).
-- Generate embeddings.
-- Store embeddings in the selected vector database.
+- Test all combinations of vector databases, embedding models, chunking strategies, and LLMs
+- Process the PDF documents in the Data directory
+- Measure performance metrics for each configuration
+- Output results to experiment_results.csv
 
-### 2. Querying and Searching
-Run the interactive search interface:
+### 2. Individual Component Testing
+#### Testing just the ingestion pipeline:
 ```bash
-    python search_qdrant.py
+# Example for Redis with nomic-embed-text
+python ingest.py
 ```
-This allows users to enter queries, retrieve context, and generate responses from the LLM.
 
-### 3. Experimentation
-Modify parameters such as:
-- `chunk_size` and `overlap` in `ingest.py`
-- `embedding_model` in `search_qdrant.py`
-- `vector database` choice
-- `local LLM` (Mistral, LLaMA 2, etc.)
-
-### 4. Performance Evaluation
-To measure indexing/search performance:
+#### Testing search with a specific vector database:
 ```bash
-    python utils.py
+# For Redis
+python search.py
+# For Qdrant
+python search_qdrant.py
+# For Chroma
+python search_chroma.py
 ```
-This records time, memory usage, and experiment results in `experiment_results.csv`.
 
----
-## Configuration
-Modify `config.py` (if applicable) or update parameters directly in scripts:
-- **Chunking**:
-  - Sizes: 50, 200, 500 tokens
-  - Overlaps: 0, 50, 100 tokens
-- **Embedding models**:
-  - `Nomic-embed-text`
-  - `sentence-transformers/all-MiniLM-L6-v2`
-  - `mxbai-embed-large`
-- **LLMs**:
-  - `Mistral`
-  - `Llama-2`
-- **Vector DB**:
-  - Redis, Qdrant, Chroma
+### 3. Customizing Experiments
+Modify `config.py` to adjust:
+- Chunking strategies
+- Embedding models
+- Vector databases
+- LLM models
+- Test queries
 
----
-## Test Queries
-The following test queries were used to evaluate retrieval effectiveness and LLM responses:
-1. **Write a PyMongo query** to find documents where the Customer’s address starts with the letter "S" or higher for Customers (“customers”) in the database (“mydatabase”). Only use the documents provided. [Reference](https://www.w3schools.com/python/python_mongodb_query.asp)
-2. **What is the capital of Tennessee?** Only use the documents provided.
-3. **Provide a 2-sentence summary on Redis and its functionality.** Only use the documents provided.
-4. **Compare and contrast Redis and Neo4j.** Only use the documents provided.
+## Experiment Configuration
+The current configuration in `config.py` specifies:
 
----
-## Deliverables
-- **GitHub Repository** (this project)
-- **Slide Deck** analyzing results
-- **Evaluation Metrics** (Robustness, Analysis, Pipeline Recommendation)
+```python
+# Chunking strategies
+chunking_strategies = [
+    {"chunk_size": 50, "overlap": 0},
+    {"chunk_size": 100, "overlap": 10},
+    {"chunk_size": 200, "overlap": 20}
+]
 
----
+# Embedding models
+embedding_models = [
+    {"model_name": "nomic-embed-text", "vector_dim": 768},
+    {"model_name": "all-minilm", "vector_dim": 384},
+    {"model_name": "mxbai-embed-large", "vector_dim": 1024},
+]
+
+# Vector databases
+vector_dbs = [
+    "redis",
+    "chroma",
+    "qdrant"
+]
+
+# LLM models
+llm_models = [
+    "mistral:latest",
+    "llama2:latest"
+]
+```
+
+## Analyzing Results
+After running the experiments, you can analyze the results in `experiment_results.csv`:
+
+```bash
+# Example: visualize results with the provided code
+python visualize_results.py
+```
+
+Based on our analysis, the top performing pipeline configurations are:
+1. Redis + mistral:latest + nomic-embed-text (chunk size: 50, overlap: 0)
+2. Qdrant + llama2:latest + mxbai-embed-large (chunk size: 50, overlap: 0)
+3. Redis + llama2:latest + nomic-embed-text (chunk size: 100, overlap: 10)
+4. Qdrant + llama2:latest + all-minilm (chunk size: 200, overlap: 20)
+5. Redis + llama2:latest + nomic-embed-text (chunk size: 50, overlap: 0)
+
+## Troubleshooting
+- **Redis connection issues**: Ensure Redis server is running on port 6379
+- **Ollama errors**: Check Ollama service status and verify models are downloaded
+- **Vector dimension mismatch**: Ensure embedding dimensions in configuration match the model output
+- **Memory errors**: Reduce batch sizes or decrease chunk sizes for large documents
+
+## Known Limitations
+- Handling of very large PDFs may require additional memory
+- Performance may vary based on local hardware capabilities
+- Certain embedding models may require significant RAM
+
 ## Team
 - **Team Members**: Priyanka Adhikari, Ruchira Banerjee, and Nidhi Bendre
 - **DS4300 Group**: Ruchidhiyanka
-
