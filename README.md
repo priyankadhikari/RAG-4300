@@ -109,8 +109,8 @@ llm_models = [
 After running the experiments, you can analyze the results using the data visualizations in `data_visualizations.ipynb`:
 
 ```bash
-# Example: visualize results with the provided code
-python visualize_results.py
+# Example: visualize results with the provided code in
+ data_visualizations.ipynb
 ```
 
 Based on our analysis, our top performing pipeline is:
