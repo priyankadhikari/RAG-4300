@@ -113,23 +113,8 @@ After running the experiments, you can analyze the results in `experiment_result
 python visualize_results.py
 ```
 
-Based on our analysis, the top performing pipeline configurations are:
-1. Redis + mistral:latest + nomic-embed-text (chunk size: 50, overlap: 0)
-2. Qdrant + llama2:latest + mxbai-embed-large (chunk size: 50, overlap: 0)
-3. Redis + llama2:latest + nomic-embed-text (chunk size: 100, overlap: 10)
-4. Qdrant + llama2:latest + all-minilm (chunk size: 200, overlap: 20)
-5. Redis + llama2:latest + nomic-embed-text (chunk size: 50, overlap: 0)
-
-## Troubleshooting
-- **Redis connection issues**: Ensure Redis server is running on port 6379
-- **Ollama errors**: Check Ollama service status and verify models are downloaded
-- **Vector dimension mismatch**: Ensure embedding dimensions in configuration match the model output
-- **Memory errors**: Reduce batch sizes or decrease chunk sizes for large documents
-
-## Known Limitations
-- Handling of very large PDFs may require additional memory
-- Performance may vary based on local hardware capabilities
-- Certain embedding models may require significant RAM
+Based on our analysis, our top performing pipeline is:
+1. Qdrant + llama2:latest + all-minilm (chunk size: 200, overlap: 20)
 
 ## Team
 - **Team Members**: Priyanka Adhikari, Ruchira Banerjee, and Nidhi Bendre
