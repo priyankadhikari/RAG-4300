@@ -38,7 +38,7 @@ The project:
 ## Usage
 ### 1. Running All Experiments
 To run all experiments with the predefined configurations:
-```bash
+```
 python main.py
 ```
 
