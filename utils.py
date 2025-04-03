@@ -27,6 +27,6 @@ def write_to_csv(data, filename="experiment_results.csv"):
             writer.writerow([
                 "VectorDB", "LLM", "EmbeddingModel", "ChunkSize", "Overlap",
                 "IngestTime(s)", "IngestMem(MB)",
-                "SearchTime(s)", "SearchMem(MB)"
+                "SearchTime(s)", "SearchMem(MB)", "Query", "Response"
             ])
         writer.writerow(data)
